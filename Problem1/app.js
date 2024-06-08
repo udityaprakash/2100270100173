@@ -24,28 +24,34 @@ app.get('/', (req, res) => {
 
 app.get('/number/:numberId', middleware.checkNumberId ,async (req, res) => {
     const numberId = req.params['numberId'];
-    if(!auth.expirationTime || !helper.isTokenValid(auth.expirationTime)){
-        const data =await helper.testServerAuth();
-        console.log("api called");
-        if(data){
-            auth.token = data.access_token;
-            auth.expirationTime = data.expires_in;
-        }        
+    try{
+
+        if(!auth.expirationTime || !helper.isTokenValid(auth.expirationTime)){
+            const data =await helper.testServerAuth();
+            console.log("api called");
+            if(data){
+                auth.token = data.access_token;
+                auth.expirationTime = data.expires_in;
+            }        
+        }
+        const response =await helper.getNumFromTestServer(auth, helper.mapNumberIdToType(numberId));
+        console.log(response.numbers);
+    
+        const updatedRes = helper.updateTheWindow(response.numbers, WINDOW_SIZE,uniqueNumbers,currentWindow);
+    
+        uniqueNumbers = updatedRes.uniqueNumbers;
+        currentWindow = updatedRes.currentWindow;   
+        res.json(
+            {
+                numbers:response.numbers,
+                windowPrevState:updatedRes.windowPrevState,
+                windowCurrentState:updatedRes.windowCurrState,
+                average:updatedRes.average
+            });
+    }catch(error){
+        console.error(error.message);
+        res.status(500).json({success:false,message: "Internal server error"});
     }
-    const response =await helper.getNumFromTestServer(auth, helper.mapNumberIdToType(numberId));
-    console.log(response.numbers);
-
-    const updatedRes = helper.updateTheWindow(response.numbers, WINDOW_SIZE,uniqueNumbers,currentWindow);
-
-    uniqueNumbers = updatedRes.uniqueNumbers;
-    currentWindow = updatedRes.currentWindow;   
-    res.json(
-        {
-            numbers:response.numbers,
-            windowPrevState:updatedRes.windowPrevState,
-            windowCurrentState:updatedRes.windowCurrState,
-            average:response.average
-        });
 });
 
 
