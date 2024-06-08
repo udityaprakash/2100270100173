@@ -55,7 +55,7 @@ class helper{
             case 'p':
                 return 'primes';
             case 'f':
-                return 'fibonacci';
+                return 'Fibonacci';
             case 'e':
                 return 'even';
             case 'r':
@@ -64,6 +64,24 @@ class helper{
                 return null;
         }
     }
+    static updateTheWindow(num,WINDOW_SIZE,uniqueNumbers,currentWindow){
+        const windowPrevState = [...currentWindow];
+        currentWindow = currentWindow.concat(num.filter(num => !uniqueNumbers.has(num)));
+        currentWindow = currentWindow.slice(-WINDOW_SIZE);
+
+        num.forEach(num => uniqueNumbers.add(num));
+        currentWindow = [...new Set(currentWindow)]; 
+
+        while (currentWindow.length > WINDOW_SIZE) {
+            const oldestNum = currentWindow.shift();
+            uniqueNumbers.delete(oldestNum);
+        }
+
+        const windowCurrState = [...currentWindow];
+        const average = currentWindow.length > 0 ? currentWindow.reduce((acc, num) => acc + num, 0) / currentWindow.length : 0;
+
+        return { windowPrevState, windowCurrState, average, uniqueNumbers, currentWindow};
+        }
 }
 
 module.exports = helper;
