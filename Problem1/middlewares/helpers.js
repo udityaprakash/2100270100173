@@ -55,11 +55,11 @@ class helper{
             case 'p':
                 return 'primes';
             case 'f':
-                return 'Fibonacci';
+                return 'fibo';
             case 'e':
                 return 'even';
             case 'r':
-                return 'random';
+                return 'rand';
             default:
                 return null;
         }
