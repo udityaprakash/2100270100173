@@ -32,6 +32,38 @@ class helper{
         // Check if the token is expired
         return currentTime < expirationTime;
     }
+
+    static async getNumFromTestServer(auth, code){
+        try {
+            console.log(code);
+            const response = await axios.get(`${helper.testServerIp}/test/${code}`, {
+                headers:{
+                    "Authorization": `Bearer ${auth.token}`,
+                },
+                timeout:5000});  
+            if (response) {
+                return response.data;
+            }else{
+                return null;
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+    static mapNumberIdToType(numberId){
+        switch (numberId) {
+            case 'p':
+                return 'primes';
+            case 'f':
+                return 'fibonacci';
+            case 'e':
+                return 'even';
+            case 'r':
+                return 'random';
+            default:
+                return null;
+        }
+    }
 }
 
 module.exports = helper;

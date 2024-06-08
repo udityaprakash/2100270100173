@@ -26,8 +26,8 @@ app.get('/number/:numberId', middleware.checkNumberId ,async (req, res) => {
             auth.expirationTime = data.expires_in;
         }        
     }
-    console.log(auth);
-
+    const response =await helper.getNumFromTestServer(auth, helper.mapNumberIdToType(numberId));
+    console.log(response);
 
     res.json({'success':true, 'message':'Valid input!'});
 });
